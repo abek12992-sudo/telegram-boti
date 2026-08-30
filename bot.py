@@ -99,7 +99,7 @@ def main():
     app.add_handler(CommandHandler("mediatek", mediatek))
     app.add_handler(CommandHandler("exynos", exynos))
     app.add_handler(CommandHandler("taqqosla", taqqosla))
-    https://telegram-boti-mc3f.onrender.com
+    
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
