@@ -1,3 +1,17 @@
+def main():
+    app = Application.builder().token(TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("snapdragon", snapdragon))
+    app.add_handler(CommandHandler("mediatek", mediatek))
+    app.add_handler(CommandHandler("exynos", exynos))
+    app.add_handler(CommandHandler("taqqosla", taqqosla))
+    app.add_handler(CommandHandler("texnologiya", texnologiya))
+
+    app.run_polling()
+
+if __name__ == "__main__":
+    main()
 import os
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
