@@ -1,4 +1,19 @@
 import os
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+class Health(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+
+def run_port():
+    server = HTTPServer(('0.0.0.0', int(os.environ.get("PORT", 8080))), Health)
+    server.serve_forever()
+
+threading.Thread(target=run_port, daemon=True).start()
+
+import os
 import asyncio
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
