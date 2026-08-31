@@ -1,88 +1,58 @@
 import os
+import asyncio
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-TOKEN = os.getenv("BOT_TOKEN")
+SNAPDRAGON = """Snapdragon — bu asosan smartfonlar, planshetlar, aqlli soatlar va hattoki noutbuklar uchun mo‘ljallangan juda mashhur va kuchli mikroprotsessorlar (chip) oilasi. Oddiyroq aytganda, u smartfoningizning "miyasi" hisoblanadi. Snapdragon chiplari AQSHning Kaliforniya shtatida joylashgan, simsiz aloqa texnologiyalari bo‘yicha dunyodagi eng yirik gigantlardan biri bo‘lgan Qualcomm kompaniyasi tomonidan ishlab chiqiladi. Ilk bor namoyish etilishi: Qualcomm birinchi Snapdragon chipini (QSD8250 modeli) 2007-yil noyabr oyida taqdim etgan va 2009-yilda sotuvga chiqqan. Nomining ma’nosi: "Snapdragon" so‘zi inglizchadan tarjima qilinganda "ajdar og‘zi" degan ma'no bildiradi ദ്ദിᵔ.˛.ᵔ₎✧."""
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = (
-        "👋 **Assalomu alaykum! Mobile Protsessorlar Botiga xush kelibsiz!**\n\n"
-        "Ushbu bot orqali siz zamonaviy smartfonlarning protsessorlari (chipset) "
-        "va ularning imkoniyatlari haqida batafsil ma'lumot olishingiz mumkin.\n\n"
-        "📌 **Mavjud buyruqlar:**\n"
-        "▫️ /snapdragon — Qualcomm Snapdragon chiplari\n"
-        "▫️ /mediatek — MediaTek Dimensity seriyasi\n"
-        "▫️ /exynos — Samsung Exynos protsessorlari\n"
-        "▫️ /taqqosla — Protsessorlarni o'zaro taqqoslash\n"
-        "▫️ /texnologiya — Ishlab chiqarish texnologiyalari (nm)"
-    )
-    await update.message.reply_text(text, parse_mode="Markdown")
+MEDIATEK = """MediaTek Dimensity: Kompaniyaning eng zamonaviy, kuchli va 5G tarmog'ini qo'llab-quvvatlaydigan flagman chiplari seriyasi. Masalan, Dimensity 9300 va 9400 kabi modellar bugungi kunda tezlik va sun'iy intellekt (AI) imkoniyatlari bo'yicha Qualcomm Snapdragon va Apple chiplari bilan bemalol raqobatlasha oladi Hozirda global smartfon protsessorlari bozorida MediaTek eng katta ulushga ega (bozorning 30-35% qismini egallab, Qualcomm kompaniyasidan ham oldinda bormoqda"""
+
+EXYNOS = """Exynos = 2000-yillar oʻrtalari: Samsung smartfonlar va media-pleyerlar uchun oddiy ARM bazasidagi chip-setlar ishlab chiqarar edi. Masalan, 2007-yilda chiqqan birinchi iPhone (2G) va iPhone 3GS prosessorlarini ham aynan Samsung tayyorlab bergan! 2010-yil (Asos solinishi): Samsung oʻzining birinchi Galaxy S (S1) flagman smartfonini chiqardi. Unda S5PC110 (kodli nomi "Hummingbird") chipi ishlatildi. 2011-yil (Rasmiy Exynos brendi): Samsung ushbu chip-setlar oilasiga rasman Exynos nomini berdi. Birinchi rasmiy brend ostidagi chip Exynos 4210 boʻlib, u afsonaviy Galaxy S2 smartfoniga oʻrnatildi."""
+
+TAQQOSLA = """⚔️ Snapdragon vs MediaTek 1. 🎮 O'yin unumdorligi Snapdragon: Adreno grafik protsessori tufayli og'ir o'yinlarda (PUBG, Mobile Legends, Genshin Impact) va emulyatorlarda yuqori, barqaror FPS beradi. Dasturchilar o'yinlarni ko'pincha aynan Snapdragon uchun optimallashtirishadi. MediaTek: Dimensity seriyasi bilan kuchli sakrash qildi. Ko'p yadroli (Multi-core) ishlashda va narxiga nisbatan beradigan quvvatida juda yuqori natija ko'rsatadi. 2. 🔋 Energiya tejamkorligi va Qizib ketish Snapdragon: Yuqori yuklama ostida va uzoq vaqt foydalanganda haroratni yaxshi nazorat qiladi. MediaTek: Kunlik foydalanishda (ijtimoiy tarmoqlar, video ko'rish, tarmoq va 5G) batareya quvvatini juda tejamkor sarflaydi."""
+
+TEXNOLOGIYA = """⚙️ 3nm dan 2nm Texnologiyaga O'tish 🤖 Smartfondagi AI (On-Device AI): Bulutli serverlarga ulanmasdan, to'g'ridan-to'g'ri telefonning o'zida ishlaydigan sun'iy intellekt (NPU) chiplari standartga aylanmoqda. ⚡ Matn va Tasvirni Lahzada Qayta Ishlash: Yangi avlod NPU birliklari matnlarni tarjima qilish, fotosuratlarni AI yordamida tahrirlash va ovozli yordamchilar javobini bir necha millisoniyada taqdim etmoqda. 🖥️ Server Chiplari Poygasi: Nvidia, AMD va Intel ma'lumotlar markazlari uchun AI GPU'larini yanada kuchaytirmoqda, bu esa smartfonlardagi AI imkoniyatlarini ham bilvosita rivojlantirmoqda. 🔬 GAA (Gate-All-Around) Arxitekturasi: TSMC va Samsung yangi 2nm chiplarida mutlaqo yangi GAA tranzistor texnologiyasiga o'tmoqda. Bu eski FinFET texnologiyasiga qaraganda tok sizib chiqishini keskin kamaytiradi va quvvatni tejaydi. 🚀 Tezlik va Energiya Tejamkorligi: 2nm chiplar 3nm ga nisbatan 10-15% yuqoriroq unumdorlik va 25-30% kamroq energiya sarfini ta'minlaydi. 🏁 Kim Birinchi? TSMC hamda Samsung 2nm chiplarini ommaviy ishlab chiqarishni yo'lga qo'ymoqda. Ular dastlab eng so'nggi flagman smartfonlar hamda AI serverlariga o'rnatiladi."""
+
+async def send_text(update: Update, text: str):
+    await update.message.reply_text(text)
 
 async def snapdragon(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = (
-        "🚀 **Qualcomm Snapdragon**\n\n"
-        "Snapdragon — Amerika Qo'shma Shtatlarining Qualcomm kompaniyasi tomonidan ishlab chiqariluvchi dunyodagi eng mashhur chipsetlar brendi.\n\n"
-        "✨ **Asosiy ustunliklari:**\n"
-        "• **Adreno grafikasi:** Mobil o'yinlarda (MLBB, PUBG, Genshin) eng yuqori FPS va barqarorlikni beradi.\n"
-        "• **Dasturiy moslashuvchanlik:** O'yin va ilova yaratuvchilar birinchi navbatda Snapdragon chiplariga optimizatsiya qilishadi.\n"
-        "• **Modem va aloqa:** 5G va Wi-Fi tezligi bo'yicha dunyoda yetakchi.\n\n"
-        "💡 *Flagman chiplari:* Snapdragon 8 Gen 2, 8 Gen 3, 8 Elite."
-    )
-    await update.message.reply_text(text, parse_mode="Markdown")
+    await send_text(update, SNAPDRAGON)
 
 async def mediatek(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = (
-        "💎 **MediaTek Dimensity**\n\n"
-        "MediaTek — Tayvan kompaniyasi bo'lib, so'nggi yillarda o'zining **Dimensity** seriyasi bilan Snapdragon'ga kuchli raqobat tug'dira olgan brend.\n\n"
-        "✨ **Asosiy ustunliklari:**\n"
-        "• **Narx va unumdorlik:** Hamyonbop va o'rta narxdagi smartfonlar uchun eng zo'r tanlov.\n"
-        "• **Energiya tejamkorligi:** Batareya quvvatini kam sarflaydi va qizish darajasi sezilarli darajada pasaytirilgan.\n"
-        "• **Mali va Immortalis grafikasi:** O'yinlarda doimiy va silliq ishlashni ta'minlaydi.\n\n"
-        "💡 *Flagman chiplari:* Dimensity 9200, 9300, 9400."
-    )
-    await update.message.reply_text(text, parse_mode="Markdown")
+    await send_text(update, MEDIATEK)
 
 async def exynos(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = (
-        "📱 **Samsung Exynos**\n\n"
-        "Exynos — Janubiy Koreyaning Samsung kompaniyasi tomonidan o'z smartfonlari va boshqa qurilmalari uchun maxsus ishlab chiqariladigan protsessorlar liniyasi.\n\n"
-        "✨ **Asosiy xususiyatlari:**\n"
-        "• **Xclipse grafikasi:** So'nggi modellarda AMD (RDNA) grafik arxitekturasidan foydalanilmoqda.\n"
-        "• **Multimediya va Displey:** Ekran ranglarini uzatish va kameralar bilan ishlash (ISP) imkoniyati juda yuqori.\n"
-        "• **Optimizatsiya:** Samsung qurilmalari va One UI qobig'i bilan chuqur integratsiya qilingan.\n\n"
-        "💡 *Flagman chiplari:* Exynos 2200, Exynos 2400."
-    )
-    await update.message.reply_text(text, parse_mode="Markdown")
+    await send_text(update, EXYNOS)
 
 async def taqqosla(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = (
-        "⚖️ **Protsessorlar Taqqoslovi**\n\n"
-        "🎮 **O'yinlar va Grafikada:**\n"
-        "Snapdragon barqaror FPS va o'yinlardagi optimizatsiyasi bilan ustun turadi.\n\n"
-        "🔋 **Energiya Tejamkorligi va Narxda:**\n"
-        "MediaTek Dimensity kamroq energiya sarflaydi hamda arzonroq narxda yuqori kuch taklif etadi.\n\n"
-        "📸 **Fotosurat va Kundalik Ishlashda:**\n"
-        "Exynos kameradan olingan tasvirni qayta ishlash va tasvir sifatini oshirishda juda yaxshi natija ko'rsatadi."
-    )
-    await update.message.reply_text(text, parse_mode="Markdown")
+    await send_text(update, TAQQOSLA)
 
 async def texnologiya(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = (
-        "🔬 **Texnologik Jarayon (Nanometr - nm)**\n\n"
-        "Protsessordagi nanometr (nm) ko'rsatkichi chip ichidagi tranzistorlarning hajmini bildiradi.\n\n"
-        "⚙️ **Bu nimani beradi?**\n"
-        "• Raqam qanchalik kichik bo'lsa (masalan, 3nm yoki 4nm), bir chipga shunchalik ko'p tranzistor sig'adi.\n"
-        "• Kichik nanometr = **Yuqoriroq tezlik** + **Kamlangan qizish** + **Tejamkor batareya**.\n\n"
-        "🏭 Bugungi kunda eng ilg'or chiplar **TSMC** va **Samsung** zavodlarida 3nm va 4nm texnologiyalari asosida ishlab chiqarilmoqda."
+    await send_text(update, TEXNOLOGIYA)
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Salom! 👋\n\nMavzularni ko‘rish uchun buyruqlardan foydalaning:\n"
+        "/snapdragon\n/mediatek\n/exynos\n/taqqosla\n/texnologiya"
     )
-    await update.message.reply_text(text, parse_mode="Markdown")
 
 def main():
-    app = Application.builder().token(TOKEN).build()
+    token = os.getenv("BOT_TOKEN")
+    if not token:
+        raise RuntimeError("BOT_TOKEN environment variable topilmadi.")
+
+    app = Application.builder().token(token).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("snapdragon", snapdragon))
     app.add_handler(CommandHandler("mediatek", mediatek))
     app.add_handler(CommandHandler("exynos", exynos))
     app.add_handler(CommandHandler("taqqosla", taqqosla))
-    app.add_
+    app.add_handler(CommandHandler("texnologiya", texnologiya))
+
+    print("Bot ishga tushdi...")
+    app.run_polling()
+
+if __name__ == "__main__":
+    main()
